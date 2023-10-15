@@ -1,0 +1,17 @@
+﻿@model Usuario
+
+<div class="modal-body">
+    <p>¿Estás seguro de que quieres eliminar el usuario @Model.UserName ?</p>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+    <!-- Formulario para enviar la solicitud de eliminación al servidor -->
+    <form id="deleteForm" method="post" asp-controller="Usuario" asp-action="DeleteConfirmed" asp-route-id="@Model.IdUser">
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+    </form>
+</div>
+
+
+
+
+<!-- ... tu código HTML existente ... -->

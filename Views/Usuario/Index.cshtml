@@ -1,0 +1,144 @@
+﻿@model List<Usuario>;
+
+<h1>Listado de Usuario</h1>
+
+<p>
+    <a asp-action="Create">
+        Crear
+    </a>
+</p>
+
+<form asp-controller="Usuario" asp-action="Index">
+    <p>
+        Buscar: <input type="text" name="buscar" class="form-text"/>
+        <input type="submit" value="Buscar" class="btn btn-dark"/>
+    </p>
+</form>
+<div class="container mt-5">
+    <h1>Ejemplo de Modal</h1>
+    <button type="button" class="btn btn-primary" id="openModalBtn">
+        Abrir Modal
+    </button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Título del Modal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Contenido del modal...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <!-- Puedes agregar más botones según tus necesidades -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Username
+            </th>
+            <th>
+                Password
+            </th>
+            <th>
+                Área
+            </th>
+            <th>
+                Fecha Registro
+            </th>
+            <th>
+                Acciones
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var area in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => area.NameComplete)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => area.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => area.PasswordUser)
+                </td>
+                <td>
+                    @Html.DisplayFor(m=>area.OArea.NameArea)
+                </td>
+                <td>
+                    @Html.DisplayFor(m=>area.DateRegister)
+                </td>
+                <td>
+
+
+                    <a class="btn btn-primary btn-sm" asp-action="Create" asp-controller="Usuario" asp-route-idUsuario="@area.IdUser">Editar</a>
+
+
+                    <button class="btn btn-danger" data-target="#DeleteUserModal_@area.IdUser" data-toggle="modal">
+                        Delete
+                    </button>
+                    <div class="modal" id="DeleteUserModal_@area.IdUser" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar eliminación</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <!-- Contenedor para cargar la vista parcial dinámicamente -->
+                                <div class="modal-content-container">
+                                    <!-- Renderiza la vista parcial aquí -->
+                                @await Html.PartialAsync("/Views/Shared/_DeleteUser.cshtml",area)
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // Captura el evento de apertura del modal
+            
+            $('#DeleteUser_IdUser').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Botón que abrió el modal
+                var itemId = button.data('id'); // Extrae el ID del elemento del botón
+
+                // Carga la vista parcial dinámicamente
+                $('.modal-content-container').load('/Usuario/Delete/' + itemId);
+            });
+        });
+                        // Espera a que el documento esté cargado
+
+    </script>
+}
+
+<!-- Button trigger modal -->
+<!-- Modal de confirmación -->
+@*<script src="~/lib/jquery/dist/jquery.js"></script>*@
+

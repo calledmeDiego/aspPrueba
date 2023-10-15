@@ -1,0 +1,23 @@
+﻿@model List<Area>
+
+<h1>Areas</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var area in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => area.NameArea)</td>
+            </tr>
+            
+        }
+    </tbody>
+</table>
+

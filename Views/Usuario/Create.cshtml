@@ -1,0 +1,74 @@
+﻿@using SustentacionASPNETCoreMVC.Models.ViewModels;
+@model UsuarioViewModel;
+
+@{
+    ViewData["Title"] = "Usuario_Detalle";
+}
+
+@if(Model.IdUsuario == 0)
+{
+    <h1> Crear usuario </h1>
+}
+else
+{
+    <h1> Editar Usuario</h1>
+}
+
+
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdUsuario" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdArea" class="control-label"></label>
+                <select asp-for="IdArea" class="form-control form-select" asp-items="ViewBag.Areas">
+                    <option selected disabled> -- SELECCIONAR --</option>
+                </select>
+                <span asp-validation-for="IdArea" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateRegister" class="control-label"></label>
+                <input type="date" asp-for="DateRegister" class="form-control" />
+                <span asp-validation-for="DateRegister" class="text-danger"></span>
+            </div>
+
+            <div class="mb-2">
+                @if (Model.IdUsuario == 0)
+                {
+                    <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
+                }
+                else
+                {
+                    <button class="btn btn-success btn-sm w-25" type="submit">Actualizar</button>
+                }
+                
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
