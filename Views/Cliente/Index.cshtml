@@ -1,0 +1,214 @@
+﻿@using SustentacionASPNETCoreMVC.Data;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model Paginacion<Cliente>
+@*@model List<Cliente>;*@
+
+<h1>Listado de Clientes</h1>
+
+<p>
+    <a asp-action="Create" asp-route-idCliente="0">
+        Crear
+    </a>
+</p>
+
+<form asp-controller="Cliente" asp-action="Index">
+    <p>
+        Buscar: <input type="text" name="buscar" value="@ViewData["FiltroActual"]" class="form-text" />
+        <input type="submit" value="Buscar" class="btn btn-dark" />
+    </p>
+</form>
+<a asp-action="Index" class="btn btn-outline-info">Lista Completa</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-ordenActual="@ViewData["FiltroNombre"]" asp-route-filtroActual="@ViewData["FiltroActual"]">
+                    Nombre
+                </a>
+               
+            </th>
+           
+            <th>
+                Tipo Documento
+            </th>
+            <th>
+                N° Identificación
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Celular
+            </th>
+            <th>
+                Tipo de Cliente
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-ordenActual="@ViewData["FiltroFecha"]" asp-route-filtroActual="@ViewData["FiltroActual"]">
+                    Fecha Registro
+                </a>                
+            </th>
+            <th>
+                Acciones
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var cliente in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m => cliente.Nombre)  @Html.DisplayFor(m => cliente.Apellido)
+                   
+                </td>
+               
+                <td>
+                    @Html.DisplayFor(m => cliente.TipoDocumento)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => cliente.DNI)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => cliente.EmailAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => cliente.Cellphone)
+                </td>
+                <td>
+                    @Html.DisplayFor(m => cliente.OCliente.Descripcion)
+                </td>
+
+
+                <td>
+                        @Html.DisplayFor(m=>cliente.FechaRegistro)
+                </td>
+                <td>
+
+
+                    <a class="btn btn-primary btn-sm" asp-action="Create" asp-controller="Cliente" asp-route-idCliente="@cliente.IdPerson">Editar</a>
+
+
+                    <button class="btn btn-danger" data-target="#DeleteUserModal_@cliente.IdPerson" data-toggle="modal">
+                        Delete
+                    </button>
+                    <div class="modal" id="DeleteUserModal_@cliente.IdPerson" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar eliminación</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <!-- Contenedor para cargar la vista parcial dinámicamente -->
+                                <div class="modal-content-container">
+                                    <!-- Renderiza la vista parcial aquí -->
+                                @await Html.PartialAsync("/Views/Cliente/_Delete.cshtml",cliente)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table>
+@if (TempData["Mensaje"] != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            swal("Good job!", '@TempData["Mensaje"]', "success");
+        };
+    </script>
+}
+@*@if (TempData["Mensaje"] != null)
+{
+    <script>
+        Swal.fire({
+            title: 'Éxito',
+            text: '@TempData["Mensaje"]',
+            icon: 'success',
+            confirmButtonText: 'Ok'
+        });
+    </script>
+}*@
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // Captura el evento de apertura del modal
+
+            $('#DeleteUser_IdUser').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Botón que abrió el modal
+                var itemId = button.data('id'); // Extrae el ID del elemento del botón
+
+                // Carga la vista parcial dinámicamente
+                $('.modal-content-container').load('/Usuario/Delete/' + itemId);
+            });
+        });
+                                        // Espera a que el documento esté cargado
+
+    </script>
+}
+
+@{
+    var anteriorDeshabilitado = !Model.PaginasAnteriores ? "disabled" : "";
+    var siguienteDeshabilitado = !Model.PaginasPosteriores ? "disabled" : "";
+}
+
+@*<div>
+    <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numPag="@(Model.PaginaInicio - 1)"
+    asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-primary @anteriorDeshabilitado" >
+        Anterior
+    </a>
+    @for (var i = 1; i<=Model.PaginasTotales; i++)
+    {
+        var paginaActiva = (i == Model.PaginaInicio) ? "active" : "";
+        <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numPag="@i"
+       asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-primary @paginaActiva">
+            @i
+        </a>
+    }
+    <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numPag="@(Model.PaginaInicio + 1)"
+       asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-primary @siguienteDeshabilitado">
+        Siguiente
+    </a>
+</div>*@
+<div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item">
+                <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numPag="@(Model.PaginaInicio - 1)"
+                   asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-primary  page-link @anteriorDeshabilitado">
+                    Anterior
+                </a>
+            </li>
+            @for (var i = 1; i <= Model.PaginasTotales; i++)
+            {
+                var paginaActiva = (i == Model.PaginaInicio) ? "active" : "";
+                <li class="page-item">
+                    <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numPag="@i"
+                   asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-primary page-link @paginaActiva">
+                        @i
+                    </a>
+                </li>
+            }
+            <li class="page-item">
+                <a asp-action="Index" asp-route-ordenActual="@ViewData["OrdenActual"]" asp-route-numPag="@(Model.PaginaInicio + 1)"
+                   asp-route-filtroActual="@ViewData["FiltroActual"]" class="btn btn-primary @siguienteDeshabilitado page-link">
+                    Siguiente
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

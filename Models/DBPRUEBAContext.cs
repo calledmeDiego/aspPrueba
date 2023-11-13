@@ -1,74 +1,63 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using SustentacionASPNETCoreMVC.Models.Tramites;
 
-namespace SustentacionASPNETCoreMVC.Models
+namespace SustentacionASPNETCoreMVC.Models;
+
+public partial class DBPRUEBAContext : DbContext
 {
-    public partial class DBPRUEBAContext : DbContext
+    public DBPRUEBAContext()
     {
-        public DBPRUEBAContext()
-        {
-        }
-
-        public DBPRUEBAContext(DbContextOptions<DBPRUEBAContext> options)
-            : base(options)
-        {
-        }
-
-        public virtual DbSet<Area> Areas { get; set; }
-        public virtual DbSet<Usuario> Usuarios { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-           
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Area>(entity =>
-            {
-                entity.HasKey(e => e.IdArea)
-                    .HasName("PK__AREA__2FC141AAE923A006");
-
-                entity.ToTable("AREA");
-
-                entity.Property(e => e.NameArea)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-            }); 
-
-            modelBuilder.Entity<Usuario>(entity =>
-            {
-                entity.HasKey(e => e.IdUser)
-                    .HasName("PK__USUARIO__B7C9263843BC5D6B");
-
-                entity.ToTable("USUARIO");
-
-                entity.Property(e => e.DateRegister).HasColumnType("date");
-
-                entity.Property(e => e.NameComplete)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PasswordUser)
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UserName)
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-                
-                entity.HasOne(d => d.OArea)
-                    .WithMany(p => p.Usuarios)
-                    .HasForeignKey(d => d.IdArea)
-                    .HasConstraintName("FK__USUARIO__IdArea__71D1E811");
-                
-            });
-
-            OnModelCreatingPartial(modelBuilder);
-        }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
+
+    public DBPRUEBAContext(DbContextOptions<DBPRUEBAContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<Area> Areas { get; set; }
+    public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Persona> Personas { get; set; }
+    public DbSet<TipoCliente> TipoClientes { get; set; }
+    public DbSet<Cliente> Clientes { get; set; }
+    public DbSet<DocumentoCliente> DocumentoClientes { get; set; }
+    public DbSet<DocumentoInvestigador> DocumentoInvestigadores { get; set; }
+    public DbSet<TramiteModel> Tramites { get; set; }
+    public DbSet<ServicioTramite> Servicios { get; set; }
+    public DbSet<DetalleTramiteServicio> DetalleTramiteServicios { get; set; }
+    public DbSet<Recibo> Recibos { get; set; }
+
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+       
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Area>().ToTable(nameof(Area));
+        modelBuilder.Entity<Persona>().ToTable(nameof(Persona)).Property(p => p.FechaNacimiento).HasColumnType("date"); ;
+
+        modelBuilder.Entity<Cliente>().ToTable(nameof(Cliente));
+
+        modelBuilder.Entity<TipoCliente>().ToTable(nameof(TipoCliente));
+        modelBuilder.Entity<Usuario>().ToTable(nameof(Usuario));
+        modelBuilder.Entity<Documento>().ToTable("Documentos")
+            .HasDiscriminator<string>("DiscriminatorDocumento")
+            .HasValue<DocumentoCliente>("Cliente")
+            .HasValue<DocumentoInvestigador>("Investigador");
+
+        modelBuilder.Entity<TramiteModel>().ToTable("Tramites");
+        modelBuilder.Entity<ServicioTramite>().ToTable("Servicios");
+        modelBuilder.Entity<DetalleTramiteServicio>().ToTable("DetalleTramiteServicio");
+        modelBuilder.Entity<Recibo>().ToTable(nameof(Recibo));
+
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

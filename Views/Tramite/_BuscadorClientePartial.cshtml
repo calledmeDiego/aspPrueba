@@ -1,0 +1,26 @@
+﻿@using SustentacionASPNETCoreMVC.Models.ViewModels
+@model TramiteViewModel
+
+<div class="alert-container">
+    @if (!string.IsNullOrEmpty(ViewBag.AlertContent))
+    {
+        <div class="alert @ViewBag.AlertClass" role="alert">
+            @ViewBag.AlertContent
+        </div>
+    }
+</div>
+
+
+<div class="form-group">
+    <label for="numeroIdentificacion">Número de Identificación del Cliente:</label>
+    
+    <input  type="text" asp-for="IdentificadorCliente" id="numeroIdentificacion" class="form-control" />
+    <button id="buscarCliente"  type="button" class="btn btn-primary">Buscar Cliente</button>
+</div>
+
+<!-- Display client information -->
+<div>
+    <label for="clienteNombre">Nombre del Cliente:</label>
+    <input type="text" id="nombreCliente" class="form-control" disabled />
+</div>
+

@@ -2,19 +2,41 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
+using SustentacionASPNETCoreMVC.Models.Tramites;
 
 namespace SustentacionASPNETCoreMVC.Models;
 
-[Index(nameof(UserName), IsUnique = true)]
-public partial class Usuario
+
+public class Usuario : Persona
 {
-    public int IdUser { get; set; } 
-    public string NameComplete { get; set; }
 
+    [Required]
+    [MaxLength(10)]
+    [MinLength(3)]
+    [Display(Name = "Nombre de Usuario")]
     public string UserName { get; set; }
+    [Required]
+    [MaxLength(10)]
+    [MinLength(3)]
+    [Display(Name = "Contraseña")]
     public string PasswordUser { get; set; }
-    public int? IdArea { get; set; }
-    public DateTime? DateRegister { get; set; }
 
+    [Display(Name = "Área")]
+    public int? IdArea { get; set; }
+
+    [ForeignKey(nameof(IdArea))]
     public virtual Area OArea { get; set; }
+    public virtual ICollection<TramiteModel> Tramites { get; set; }
+
+    public string Direccion { get; set; }
+
+}
+
+public enum Direccion
+{
+    Intermedio,
+    Historico,
+    Ambos
 }

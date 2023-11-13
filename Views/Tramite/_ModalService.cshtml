@@ -1,0 +1,60 @@
+﻿@using SustentacionASPNETCoreMVC.Models.Tramites;
+@model List<ServicioTramite>
+<div class="modal fade" id="miModalServicios" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Mi Modal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Contenido del modal...
+                <span>Checkbox</span>
+                <div class="container">
+                    <div class="row">
+                        @foreach (var servicio in Model)
+                        {
+                            if (servicio.IdServicio == 11 || servicio.IdServicio == 13)
+                            {
+                                // Saltar este registro y continuar con el siguiente
+                                continue;
+                            }
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check">
+                                    @if (servicio.IdServicio == 1 || servicio.IdServicio == 3)
+                                    {
+                                        <input class="form-check-input checkboxservices2" value="@servicio.IdServicio" type="checkbox"  onclick="return false;" id="check@(servicio.IdServicio)" @(servicio.Selected ? "checked" : "")>
+
+                                        <label class="form-check-label" for="check@(servicio.IdServicio)">
+                                            @servicio.Nombre
+                                            @servicio.IdServicio
+
+                                        </label>
+                                    }
+                                    else
+                                    {
+                                        <input class="form-check-input checkboxservices2" value="@servicio.IdServicio" type="checkbox" asp-for="@servicio.Selected" id="check@(servicio.IdServicio)">
+
+                                        <label class="form-check-label" for="check@(servicio.IdServicio)">
+                                            @servicio.Nombre
+                                            @servicio.IdServicio
+
+                                        </label>
+                                    }
+                                   
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" id="btnContinuar" data-dismiss="modal" class="btn btn-primary">Continuar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*<script src="~/js/checkboxeschecked.js"></script>*@

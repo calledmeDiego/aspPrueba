@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SustentacionASPNETCoreMVC.Data;
 using SustentacionASPNETCoreMVC.Models;
+using SustentacionASPNETCoreMVC.Models.Tramites;
 using SustentacionASPNETCoreMVC.Models.ViewModels;
 using System;
 using System.Linq;
@@ -18,115 +20,133 @@ public class UsuarioController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index(string buscar)
+    public async Task<IActionResult> Index(string buscar, string ordenActual, int? numPag, string filtroActual)
     {
         var usuarios = from Usuario in _context.Usuarios select Usuario;
+        
+        
+
+        if (buscar != null)
+            numPag = 1;
+        else
+            buscar = filtroActual;
+
         if (!string.IsNullOrEmpty(buscar))
-        {
             usuarios = usuarios.Where(s => s.UserName!.Contains(buscar));
+
+        ViewData["OrdenActual"] = ordenActual;
+
+        ViewData["FiltroActual"] = buscar;
+
+        //Lógica para realizar filtrado en orden ascendente y descendente
+        ViewData["FiltroNombre"] = String.IsNullOrEmpty(ordenActual) ? "NombreDescendente" : "";
+
+        ViewData["FiltroFecha"] = ordenActual == "FechaAscendente" ? "FechaDescendente" : "FechaAscendente";
+
+
+        switch (ordenActual)
+        {
+            case "NombreDescendente":
+                usuarios = usuarios.OrderByDescending(cliente => cliente.Nombre);
+                break;
+
+            case "FechaDescendente":
+                usuarios = usuarios.OrderByDescending(cliente => cliente.FechaRegistro);
+                break;
+
+            case "FechaAscendente":
+                usuarios = usuarios.OrderBy(cliente => cliente.FechaRegistro);
+                break;
+
+            default:
+                usuarios = usuarios.OrderBy(cliente => cliente.Nombre);
+                break;
+
         }
-        var lista = await usuarios.Include(u => u.OArea).ToListAsync();
+        //var lista = await clientes.Include(u => u.OCliente).ToListAsync();
 
+        //CANTIDAD DE REGISTROS POR PÁGINA
+        int cantidadRegistros = 6;
 
-        return View(lista);
+        var nuevalista = await Paginacion<Usuario>.CrearPaginacion(usuarios.Include(u => u.OArea).AsNoTracking(), numPag ?? 1, cantidadRegistros);
+
+        // RETORNARA A LA VISTA INDEX JUNTO A LA VARIABLE
+        return View(nuevalista);
+
+        //var lista = await usuarios.Include(u => u.OArea).ToListAsync();
+
+        //return View(lista);
     }
 
-    public IActionResult Create(int idUsuario)
+    public async Task<IActionResult> Create(int idUsuario)
     {
-        ViewData["Areas"] = new SelectList(_context.Areas, "IdArea", "NameArea");
+        ViewData["Areas"] = new SelectList( _context.Areas, "IdArea", "NameArea");
+
+        UsuarioViewModel oUsuarioVM = new UsuarioViewModel()
+        {
+            OUsuario = new Usuario(),
+            OListaArea =await _context.Areas.Select(area => new SelectListItem()
+            {
+                Text = area.NameArea,
+                Value = area.IdArea.ToString()
+            }).ToListAsync()
+        };
+        var direcciones = Enum.GetValues(typeof(Direccion))
+                             .Cast<Direccion>()
+                             .Select(e => new SelectListItem
+                             {
+                                 Value = ((int)e).ToString(),
+                                 Text = e.ToString()
+                             })
+                             .ToList();
+
+        ViewBag.Direcciones = direcciones;
 
         if (idUsuario != 0)
         {
-            var usuario = _context.Usuarios.Find(idUsuario);
-            if (usuario != null)
-            {
-                var usuarioVM = new UsuarioViewModel
-                {
-                    IdUsuario = (int)usuario.IdUser,
-                    Name = usuario.NameComplete,
-                    UserName = usuario.UserName,
-                    Password = usuario.PasswordUser,
-                    IdArea = (int)usuario.IdArea,
-                    DateRegister = usuario.DateRegister.Value.ToString("yyyy-MM-dd")
-
-                };
-
-                return View(usuarioVM);
-            }
+            oUsuarioVM.OUsuario = await _context.Usuarios.FindAsync(idUsuario);
         }
+        return View(oUsuarioVM);
 
-        return View(new UsuarioViewModel());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(UsuarioViewModel model)
-    {
-        ViewData["Areas"] = new SelectList(_context.Areas, "IdArea", "NameArea", model.IdArea);
-
+    {      
         if (ModelState.IsValid)
-
         {
-
-            var usuario = new Usuario
-            {
-                IdUser = (int)model.IdUsuario,
-                NameComplete = model.Name,
-                IdArea = model.IdArea,
-                UserName = model.UserName,
-                PasswordUser = model.Password,
-                DateRegister = DateTime.Parse(model.DateRegister)
-            };
             // Lógica para verificar si el nombre de usuario ya existe en la base de datos
-            if (NombreUsuarioExiste(usuario.UserName))
+            if (NombreUsuarioExiste(model.OUsuario.UserName) && model.OUsuario.IdPerson == 0)
             {
                 ModelState.AddModelError("UserName", "El nombre de usuario ya está en uso.");
                 return View(model);
             }
+
+            if (model.OUsuario.IdPerson == 0)
+            {
+                _context.Usuarios.Add(model.OUsuario);
+            }
             else
             {
-                if ((int)model.IdUsuario == 0)
-                {
-                    _context.Usuarios.Add(usuario);
-                }
-                else
-                {
-                    _context.Usuarios.Update(usuario);
-
-                }
+                _context.Usuarios.Update(model.OUsuario);
             }
 
             await _context.SaveChangesAsync();
-
         }
-
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet]
-    [ValidateAntiForgeryToken]
-    public IActionResult Delete(int idUsuario)
-    {
-
-        Usuario usuario = _context.Usuarios.Where(u => u.IdUser == idUsuario).FirstOrDefault();
-
-        if (usuario == null)
-        {
-            return NotFound();
-        }
-
-        return PartialView("_DeleteUser", usuario);
-
-    }
+    
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult DeleteConfirmed(int id)
+    public async Task<IActionResult> DeleteConfirmed(int id)
     {
         // Elimina el usuario de la base de datos
-        Usuario usuario = _context.Usuarios.Include(a => a.OArea).Where(u => u.IdUser == id).FirstOrDefault();
+        Usuario usuario =await _context.Usuarios.Include(a => a.OArea).Where(u => u.IdPerson == id).FirstOrDefaultAsync();
         _context.Usuarios.Remove(usuario);
-        _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return RedirectToAction("Index");
     }
 

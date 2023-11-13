@@ -12,9 +12,12 @@ namespace SustentacionASPNETCoreMVC.Controllers;
 public class AccesoController : Controller
 {
     private readonly DBPRUEBAContext _context;
-    public AccesoController(DBPRUEBAContext context)
+    private readonly DataAccess _dataAccess;
+
+    public AccesoController(DBPRUEBAContext context, DataAccess dataAccess)
     {
         _context = context;
+        _dataAccess = dataAccess;
     }
     public IActionResult Index()
     {
@@ -24,24 +27,19 @@ public class AccesoController : Controller
     [HttpPost]
     public async Task<IActionResult> Index(Usuario _usuario)
     {
-        DataAccess data = new DataAccess(_context);
-
-        var usuario = data.ValidarUsuario(_usuario.UserName, _usuario.PasswordUser);
+        
+        var usuario = await _dataAccess.ValidarUsuario(_usuario.UserName, _usuario.PasswordUser);
         if (usuario != null)
         {
+            // Almacena el ID del usuario en la sesión antes de redirigirlo
+            HttpContext.Session.SetString("UserId", usuario.IdPerson.ToString());
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, usuario.NameComplete),
-                 new Claim("UserName", usuario.UserName)
-
+                new Claim(ClaimTypes.Name, usuario.Nombre),
+                new Claim("UserName", usuario.UserName),
+                new Claim(ClaimTypes.Role, usuario.OArea.NameArea)
             };
-
-
-            foreach (var area in _context.Areas.ToList())
-            {
-                claims.Add(new Claim(ClaimTypes.Role, area.NameArea));
-            }
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 

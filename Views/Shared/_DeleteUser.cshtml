@@ -6,7 +6,7 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
     <!-- Formulario para enviar la solicitud de eliminación al servidor -->
-    <form id="deleteForm" method="post" asp-controller="Usuario" asp-action="DeleteConfirmed" asp-route-id="@Model.IdUser">
+    <form id="deleteForm" method="post" asp-controller="Usuario" asp-action="DeleteConfirmed" asp-route-id="@Model.IdPerson">
         <button type="submit" class="btn btn-danger">Eliminar</button>
     </form>
 </div>

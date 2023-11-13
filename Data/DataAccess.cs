@@ -11,19 +11,17 @@ public class DataAccess
     {
         _context = context;
     }
-    public List<Usuario> ListaUsuario()
-    {
+    //public async Task<List<Usuario>> ListaUsuario()
+    //{
         
-
-        var usuarios = _context.Usuarios.Include(u => u.OArea).ToList();
-        return usuarios;
+    //    return await _context.Usuarios.Include(u => u.OArea).ToListAsync();
         
-
-       
-    }
-    public Usuario ValidarUsuario(string username, string password)
+    //}
+    public async Task<Usuario> ValidarUsuario(string username, string password)
     {
-        return ListaUsuario().Where(item => item.UserName == username && item.PasswordUser == password).FirstOrDefault();
+       return await _context.Usuarios
+        .Include(u => u.OArea)
+        .FirstOrDefaultAsync(item => item.UserName == username && item.PasswordUser == password);
     }
 
 }

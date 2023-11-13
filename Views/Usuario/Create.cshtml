@@ -5,7 +5,7 @@
     ViewData["Title"] = "Usuario_Detalle";
 }
 
-@if(Model.IdUsuario == 0)
+@if (Model.OUsuario.IdPerson == 0)
 {
     <h1> Crear usuario </h1>
 }
@@ -19,40 +19,83 @@ else
 <hr />
 
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col">
+
+        <form asp-action="Create" method="post" asp-controller="Usuario">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IdUsuario" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdArea" class="control-label"></label>
-                <select asp-for="IdArea" class="form-control form-select" asp-items="ViewBag.Areas">
-                    <option selected disabled> -- SELECCIONAR --</option>
-                </select>
-                <span asp-validation-for="IdArea" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateRegister" class="control-label"></label>
-                <input type="date" asp-for="DateRegister" class="form-control" />
-                <span asp-validation-for="DateRegister" class="text-danger"></span>
+            <input type="hidden" asp-for="OUsuario.IdPerson" />
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group">
+                        <label asp-for="OUsuario.DNI" class="control-label"></label>
+                        <input asp-for="OUsuario.DNI" type="number" class="form-control" />
+                        <span asp-validation-for="OUsuario.DNI" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OUsuario.Nombre" class="control-label"></label>
+                        <input asp-for="OUsuario.Nombre" class="form-control" />
+                        <span asp-validation-for="OUsuario.Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OUsuario.Apellido" class="control-label">Apellido   </label>
+                        <input asp-for="OUsuario.Apellido" class="form-control" />
+                        <span asp-validation-for="OUsuario.Apellido" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OUsuario.Cellphone" class="control-label"></label>
+                        <input maxlength="9" asp-for="OUsuario.Cellphone" type="number" class="form-control" />
+                        <span asp-validation-for="OUsuario.Cellphone" class="text-danger"></span>
+                    </div>
+                   
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label asp-for="OUsuario.UserName" class="control-label"></label>
+                        <input asp-for="OUsuario.UserName" class="form-control" />
+                        <span asp-validation-for="OUsuario.UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OUsuario.PasswordUser" class="control-label"></label>
+                        <input asp-for="OUsuario.PasswordUser" type="password" class="form-control" />
+                        <span asp-validation-for="OUsuario.PasswordUser" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3 form-group">
+                        <label class="form-label" asp-for="OUsuario.IdArea">Área</label>
+                        <select class="form-select form-select-sm" asp-for="OUsuario.IdArea" asp-items="@Model.OListaArea">
+                            <option selected disabled>-- Seleccionar --</option>
+                        </select>
+                    </div>
+                    
+                    
+                </div>
+                <div class="col-4">
+                    <div class="mb-3 form-group">
+                        <label asp-for="OUsuario.Direccion" class="control-label"></label>
+
+                        <select asp-for="OUsuario.Direccion" class="form-select form-select-sm" asp-items="@(ViewBag.Direcciones)">
+                            <option selected disabled value="">-- Selecciona una direccion --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OUsuario.FechaNacimiento" class="control-label"></label>
+                        <input type="date" asp-for="OUsuario.FechaNacimiento" class="form-control" />
+                        <span asp-validation-for="OUsuario.FechaNacimiento" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OUsuario.Domicilio" class="control-label">Domicilio</label>
+                        <input asp-for="OUsuario.Domicilio" class="form-control" />
+                        <span asp-validation-for="OUsuario.Domicilio" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OUsuario.Cargo" class="control-label"></label>
+                        <input asp-for="OUsuario.Cargo" class="form-control" />
+                        <span asp-validation-for="OUsuario.Cargo" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
             <div class="mb-2">
-                @if (Model.IdUsuario == 0)
+                @if (Model.OUsuario.IdPerson == 0)
                 {
                     <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
                 }
@@ -60,7 +103,7 @@ else
                 {
                     <button class="btn btn-success btn-sm w-25" type="submit">Actualizar</button>
                 }
-                
+
             </div>
         </form>
     </div>

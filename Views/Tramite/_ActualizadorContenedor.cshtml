@@ -1,0 +1,88 @@
+﻿@using SustentacionASPNETCoreMVC.Models.Tramites;
+@model List<ServicioTramite>
+
+<h2>Valores Seleccionados</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">
+                Descripción
+            </th>
+            <th scope="col">
+                Precio
+            </th>
+            <th scope="col">
+                Cantidad
+            </th>
+            <th scope="col">
+                Costo Total
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var servicio in Model)
+        {
+            <tr>
+                <th>
+                    <input type="number" readonly class="form-control-plaintext idServicioTabla" value="@servicio.IdServicio">
+                    <input type="text" readonly class="form-control-plaintext nombreServicio" value="@servicio.Nombre">
+                </th>
+                <th>
+                    <input type="text" readonly class="form-control-plaintext precioServicio" value="@servicio.Precio">
+                </th>
+                <th>
+                    @if (servicio.IdServicio == 1 || servicio.IdServicio == 2 || servicio.IdServicio == 3 || servicio.IdServicio == 4)
+                    {
+                        <input class="form-control form-control-sm cantidadServicio" type="number" id="cantidad@(servicio.IdServicio)" onblur="calcularSubTotal('@servicio.IdServicio');" value="1" readonly>
+                    }
+                    else
+                    {
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-secondary btn-number" data-type="minus" data-field="cantidad@(servicio.IdServicio)">
+                                    <span class="glyp glyphicon-minus">-</span>
+                                </button>
+                            </span>
+                            <input type="number" name="cantidad@(servicio.IdServicio)" id="cantidad@(servicio.IdServicio)" class="form-control   input-number cantidadServicio" value="1" min="1" readonly/>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-secondary btn-number" data-type="plus" data-field="cantidad@(servicio.IdServicio)">
+                                    <span class="glyphicon glyphicon-plus">+</span>
+                                </button>
+                            </span>
+                        </div>
+                    }
+                </th>
+                <th>
+                    <input type="text" class="form-control-plaintext subTotalServicio" id="subTotalService@(servicio.IdServicio)" value="@servicio.Precio" readonly>
+                </th>
+            </tr>
+            
+        }
+        <tr>
+
+            <th colspan="3" class="table-active">Total</th>
+            <th>
+                <input type="text" class="form-control-plaintext" id="totalServices" readonly>
+            </th>
+        </tr>
+        
+    </tbody>
+</table>
+
+<script src="~/js/calculartabla2.js"></script>
+
+
+@*@if (Model != null && Model.Any())
+{
+
+
+        @foreach (var servicio in Model)
+        {
+            <div>@servicio.Nombre</div>
+        }
+
+}
+else
+{
+    <p>No se han seleccionado servicios.</p>
+}*@

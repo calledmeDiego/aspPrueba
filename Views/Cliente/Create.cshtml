@@ -1,0 +1,170 @@
+﻿@using SustentacionASPNETCoreMVC.Models.ViewModels;
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model ClienteViewModel;
+
+@{
+    ViewData["Title"] = "Cliente_Detalle";
+}
+
+@if (Model.OCliente.IdPerson == 0)
+{
+    <h1> Crear cliente </h1>
+}
+else
+{
+    <h1> Editar Usuario</h1>
+}
+
+<hr />
+<div class="container text-center">
+    <div class="row align-items-start">
+        <div class="col">
+            <form asp-action="Create" asp-controller="Cliente" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="OCliente.IdPerson" />
+                @if (Model.OCliente.IdPerson == 0)
+                {
+                    <div class="form-group">
+                        <label asp-for="OCliente.FechaRegistro" class="control-label"></label>
+                        <input type="date" asp-for="OCliente.FechaRegistro" disabled value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" id="FechaRegistro" />
+                        <span asp-validation-for="OCliente.FechaRegistro" class="text-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label asp-for="OCliente.FechaRegistro" class="control-label"></label>
+                        <input type="date" asp-for="OCliente.FechaRegistro" value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                        <span asp-validation-for="OCliente.FechaRegistro" class="text-danger"></span>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-4">
+                        <div class="mb-3 form-group">
+                            <label class="form-label" asp-for="OCliente.IdTipoCliente">Tipo de Cliente</label>
+                            <select class="form-select form-select-sm" asp-for="OCliente.IdTipoCliente" asp-items="@Model.OListaTipoClientes" id="TipoCliente">
+                                <option selected disabled>-- Seleccionar --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="habilitarCampoExtranjero">Extranjero</label>
+
+                            <input asp-for="OCliente.Extranjero" type="checkbox" id="habilitarCampoExtranjero">
+                        </div>
+                        <div class="form-group">
+                            <label style="display: none;" id="lblPasaporteExtranjero" class="control-label">Pasaporte</label>
+
+                            <label id="lblDNINacional" class="control-label">DNI</label>
+                            <input asp-for="OCliente.DNI" type="number" class="form-control" />
+                            <span asp-validation-for="OCliente.DNI" class="text-danger"></span>
+                        </div>
+                        <div id="camposExtranjero" style="display: none;">
+
+                            <div class="form-group">
+                                <label asp-for="OCliente.País">País</label>
+                                <input asp-for="OCliente.País" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="OCliente.Ciudad">Ciudad</label>
+                                <input asp-for="OCliente.Ciudad" class="form-control">
+                            </div>
+                        </div>
+                        <div id="camposNacional">
+
+                            <div class="form-group">
+                                <label asp-for="OCliente.Departamento" class="control-label"></label>
+                                <input asp-for="OCliente.Departamento" class="form-control" />
+                                <span asp-validation-for="OCliente.Departamento" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="OCliente.Provincia" class="control-label"></label>
+                                <input asp-for="OCliente.Provincia" class="form-control" />
+                                <span asp-validation-for="OCliente.Provincia" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        @*<div class="form-group">
+                        <label asp-for="OCliente.Empleo" class="control-label"></label>
+                        <input asp-for="OCliente.Empleo" class="form-control" />
+                        <span asp-validation-for="OCliente.Empleo" class="text-danger"></span>
+                        </div>*@
+                        <div class="form-group">
+                            <label asp-for="OCliente.Nombre" class="control-label"></label>
+                            <input asp-for="OCliente.Nombre" class="form-control" />
+                            <span asp-validation-for="OCliente.Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="OCliente.Apellido" class="control-label"></label>
+                            <input asp-for="OCliente.Apellido" class="form-control" />
+                            <span asp-validation-for="OCliente.Apellido" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="OCliente.Cellphone" class="control-label"></label>
+                            <input asp-for="OCliente.Cellphone" type="number" class="form-control numeroInput" />
+                            <span asp-validation-for="OCliente.Cellphone" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="OCliente.FechaNacimiento" class="control-label"></label>
+                            <input type="date" asp-for="OCliente.FechaNacimiento" value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                            <span asp-validation-for="OCliente.FechaNacimiento" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label asp-for="OCliente.EmailAddress" class="control-label"></label>
+                            <input asp-for="OCliente.EmailAddress" type="email" class="form-control" />
+                            <span asp-validation-for="OCliente.EmailAddress" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="OCliente.Domicilio" class="control-label"></label>
+                            <input asp-for="OCliente.Domicilio" class="form-control" />
+                            <span asp-validation-for="OCliente.Domicilio" class="text-danger"></span>
+                        </div>
+                        <div id="carnetContainer" style="display:none;">
+                            <div class="form-group">
+                                <label asp-for="OCliente.Carnet" class="control-label"></label>
+                                <input asp-for="OCliente.Carnet" class="form-control" />
+                                <span asp-validation-for="OCliente.Carnet" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        @* <div class="form-group">
+                        <label asp-for="OCliente.Carnet" class="control-label"></label>
+                        <input asp-for="OCliente.Carnet" class="form-control" />
+                        <span asp-validation-for="OCliente.Carnet" class="text-danger"></span>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="mb-2 col">
+                    @if (Model.OCliente.IdPerson == 0)
+                    {
+                        <button class="btn btn-primary btn-sm w-25" type="submit">Crear</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-success btn-sm w-25" type="submit">Actualizar</button>
+                    }
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@*@if (ViewBag.SweetAlertTipo != null && ViewBag.SweetAlertMensaje != null)
+{
+    <script>
+        mostrarSweetAlert('@ViewBag.SweetAlertTipo', '@ViewBag.SweetAlertMensaje');
+    </script>
+}*@
+
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/cliente/clientecreate.js"></script>
+}

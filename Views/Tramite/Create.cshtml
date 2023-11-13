@@ -1,0 +1,276 @@
+﻿@using SustentacionASPNETCoreMVC.Models.ViewModels;
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model TramiteViewModel;
+
+@{
+    ViewData["Title"] = "Tramite_Detalle";
+    var direcciones = ViewData["Direcciones"] as List<SelectListItem>;
+}
+
+@if (Model.OTramite.IdTramite == 0)
+{
+    <h1> Crear Tramite </h1>
+}
+else
+{
+    <h1> Editar Tramite</h1>
+}
+
+<hr />
+<div class="container text-center">
+    @*<label class="control-label" asp-for="OTramite.IdTramite"></label>*@
+    <div class="row align-items-start">
+        <div class="col">
+            
+            
+            <form asp-action="Create" asp-controller="Tramite" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input hidden id="idTramiteDocumentario" asp-for="OTramite.IdTramite" />
+                @*<input hidden asp-for="OTramite.OUsuario" />*@
+                <input hidden asp-for="OTramite.IdUsuario" />
+                <input hidden asp-for="OTramite.IdDocumento" />
+
+                @await Html.PartialAsync("_BuscadorClientePartial.cshtml")
+                <input asp-for="OTramite.IdCliente" id="idCliente"/>
+                
+
+
+                <div class="form-group">
+                    <label asp-for="OTramite.FechaRegistro" class="control-label"></label>
+                    <input type="date" asp-for="OTramite.FechaRegistro" value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                    <span asp-validation-for="OTramite.FechaRegistro" class="text-danger"></span>
+                </div>
+                <input asp-for="OTramite.FechaFinalizado" type="date" class="form-control" />
+               
+                <div class="row">
+                    <div class="col-3">
+
+                        <div class="mb-3 form-group">
+
+                            <label asp-for="OTramite.TipoTramite" class="form-label"></label>
+                            <select asp-for="OTramite.TipoTramite" class="form-select form-select-sm" asp-items="@direcciones" id="tipoProcedimiento">
+                                <option selected disabled>-- Selecciona una direccion --</option>
+                            </select>
+                        </div>
+
+                        @*TRAMITE INVESTIGADOR INTERMEDIO*@
+                        <div class="mb-3 form-group   tramiteinvestigadorintermedio" style=" display: none;">
+                            <label class="form-label"> N° EXPEDIENTE </label>
+                            <input asp-for="ODocumentoInvestigador.Expediente" type="number" class="form-control" placeholder="N° EXPEDIENTE" />
+                        </div>
+                        @*TRAMITE INVESTIGADOR INTERMEDIO*@
+                        <div class="mb-3 form-group tramiteinvestigador" style=" display: none;">
+                            <label class="form-label"> N° CARNET </label>
+                            <input asp-for="ODocumentoInvestigador.NumCarnet" type="number" class="form-control" placeholder="LEGAJO"/>
+                        </div>
+                        
+
+                        <div class="mb-3 form-group tramiteinvestigador" style=" display: none;">
+                            <label class="form-label"> N° LEGAJO </label>
+                            <input asp-for="ODocumentoInvestigador.Leg" type="text" class="form-control" placeholder="LEGAJO"/>
+                        </div>
+                        <div class="mb-3 form-group tramiteinvestigadorhistorico" style=" display: none;">
+                            <label class="form-label"> N° CUADERNO </label>
+                            <input asp-for="ODocumentoInvestigador.Cuaderno" type="text" class="form-control" placeholder="N° Cuaderno"/>
+                        </div>
+
+                        <div class="mb-3 form-group tramiteinvestigadorhistorico" style=" display: none;">
+                            <label class="form-label"> N° LIBRO </label>
+                            <input asp-for="ODocumentoInvestigador.Libro" type="text" class="form-control" placeholder="N° Libro"/>
+                        </div>
+
+                        
+
+                        <div class="mb-3 form-group tramiteinvestigadorhistorico" style=" display: none;">
+                            <label class="form-label"> ESCRIBANO </label>
+                            <input asp-for="ODocumentoInvestigador.Escribano" type="text" class="form-control" placeholder="Escribano"/>
+                        </div>
+                        
+
+                        @*CAMPO PARA ESCRITURA*@
+                        <div class="mb-3 form-group escritura_fields" style="display: none;">
+                            <label class="form-label">Escritura</label>
+                            <input asp-for="ODocumentoCliente.EscrituraPersona" type="text" class="form-control" placeholder="Escritura">
+                        </div>
+                        @*CAMPO PARA ESCRITURA*@
+
+                        @*CAMPO PARA PARTIDAS*@
+                        <div class="mb-3 form-group partidas_fields" style="display: none;">
+                            <label class="form-label">Aclaramiento</label>
+                            <input type="text" asp-for="ODocumentoCliente.Aclaramiento" class="form-control" placeholder="Aclaramiento">
+                        </div>
+                        @*CAMPO PARA PARTIDAS*@
+
+                        @*CAMPO PARA PARTIDAS*@
+                        <div class="mb-3 form-group partidas_fields" style="display: none;">
+                            <label class="form-label" for="notario_id">Apellidos y Nombres</label>
+                            <input type="text" asp-for="ODocumentoCliente.NombreApe" id="notario_id" class="form-control" placeholder="Apellidos y Nombres">
+                        </div>
+                        @*CAMPO PARA PARTIDAS*@
+                    </div>
+
+                    <div class="col-3">
+                        <div class="mb-3 form-group" style="display: none;" id="segundoSelector">
+                            <label class="form-label">Tipo de Cliente</label>
+                            <select class="form-select form-select-sm" asp-for="OTramite.Documento.DiscriminatorDocumento" asp-items="@Model.OListaTipoFormato" id="tipoCliente">
+                                <option selected disabled value="">-- Seleccionar --</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 form-group  tramiteinvestigador" style="display: none;">
+                            <label class="form-label"> AÑO </label>
+                            <input asp-for="ODocumentoInvestigador.Anio" type="text" class="form-control" placeholder="Anio"/>
+                        </div>
+                        @*CAMPO PARA ESCRITURA*@
+                        <div class="mb-3 form-group escritura_fields" style="display: none;">
+                            <label class="form-label" for="otorgamiento_id">Otorgado</label>
+                            <input asp-for="ODocumentoCliente.OtorgamientoPersona" type="text" id="otorgamiento_id" class="form-control" placeholder="Otorgado">
+                        </div>
+
+                        <div class="mb-3 form-group escritura_fields" style="display: none;">
+                            <label class="form-label" for="fecha_suscrita_id">Fecha Suscrita</label>
+                            <input asp-for="ODocumentoCliente.DiaSuscrito" type="date" id="fecha_suscrita_id" class="form-control" placeholder="">
+                        </div>
+                        @*CAMPO PARA ESCRITURA*@
+
+                        @*CAMPO PARA PARTIDAS*@
+                        <div class="mb-3 form-group partidas_fields tramiteinvestigadorintermedio  tramitenormaleinvesinter" style="display: none;">
+                            <label class="form-label" for="otorgamiento_id">Fondo Documental</label>
+                            <input type="text" id="otorgamiento_id" asp-for="ODocumentoCliente.FondoDoc" class="form-control" placeholder="Fondo Documental">
+                        </div>
+                        @*CAMPO PARA PARTIDAS*@
+
+                        <div class="camposInvestigador" style="display: none;">
+                            <!-- Campos adicionales para Investigador -->
+                            <div class="mb-3 form-group">
+                                <label class="form-label" asp-for="ODocumentoCliente.EscrituraPersona">Campo 1</label>
+                                <input class="form-control" asp-for="ODocumentoCliente.EscrituraPersona" />
+                            </div>
+                            <!-- Agregar más campos según sea necesario -->
+                        </div>
+
+                        <div class="camposInvestigador" style="display: none;">
+                            <!-- Campos adicionales para Investigador -->
+                            <div class="mb-3 form-group">
+                                <label class="form-label">Campo 2</label>
+                                <input class="form-control" />
+                            </div>
+                            <!-- Agregar más campos según sea necesario -->
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="mb-3 form-group">
+                            <button type="button" data-toggle="modal" data-target="#miModalServicios" class="btn btn-primary btn-sm" style="display: none;" id="btnServicios">Servicios</button>
+                            <!-- Este dv estará oculto inicialmente -->
+                        </div>
+                        @*CAMPO PARA ESCRITURA*@
+                        <div class="mb-3 form-group escritura_fields" style="display: none;">
+                            <label class="form-label" for="favorecimiento_id">Favorecimiento</label>
+                            <input type="text" id="favorecimiento_id" class="form-control" placeholder="Favorecimiento" asp-for="ODocumentoCliente.FavorecimientoPersona">
+                        </div>
+
+                        <div class="mb-3 form-group escritura_fields" style="display: none;">
+                            <label class="form-label" for="notario_id">Notario que Valido</label>
+                            <input type="text" id="notario_id" class="form-control" placeholder="Nombre del Notario" asp-for="ODocumentoCliente.ExNotario">
+                        </div>
+                        @*CAMPO PARA ESCRITURA*@
+
+
+                        @*CAMPO PARA PARTIDAS*@
+                        <div class="mb-3 form-group partidas_fields tramitenormalinveshisto" style="display: none;">
+                            <label class="form-label" for="favorecimiento_id">Sección Documental</label>
+                            <input type="text" id="favorecimiento_id" class="form-control" placeholder="Sección Documental" asp-for="ODocumentoCliente.SeccionDoc">
+                        </div>
+                        @*CAMPO PARA PARTIDAS*@
+
+
+
+
+
+                        @*CAMPO PARA PARTIDAS*@
+                        <div class="mb-3 form-group partidas_fields" style="display: none;">
+                            <label class="form-label" for="notario_id">Fecha Documento</label>
+                            <input type="date" a value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" asp-for="ODocumentoCliente.FechaFD" />
+                        </div>
+                        @*CAMPO PARA PARTIDAS*@
+
+                        @*CAMPO PARA PARTIDAS*@
+                        <div class="mb-3 form-group partidas_fields" style="display: none;">
+                            <label class="form-label" for="notario_id">Provincia </label>
+                            <input type="text" id="notario_id" class="form-control" placeholder="Provincia" asp-for="ODocumentoCliente.Provincia">
+                        </div>
+                        @*CAMPO PARA PARTIDAS*@
+
+                        @*CAMPO PARA PARTIDAS*@
+                        <div class="mb-3 form-group partidas_fields" style="display: none;">
+                            <label class="form-label" for="notario_id">Distrito</label>
+                            <input type="text" id="notario_id" class="form-control" placeholder="Distrito" asp-for="ODocumentoCliente.Distrito">
+                        </div>
+                        @*CAMPO PARA PARTIDAS*@
+
+                        <div id="camposPrincipales" style="display: none;">
+                            <label for="campo1">Campo 1:</label>
+                            <input type="text" id="campo1" name="campo1">
+
+                            <label for="campo2">Campo 2:</label>
+                            <input type="text" id="campo2" name="campo2">
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        @*CAMPO PARA ESCRITURA*@
+                        <div class="mb-3 form-group escritura_fields" style="display: none;">
+                            <label class="form-label" for="favorecimiento_id">Favorecimiento</label>
+                            <input type="text" id="favorecimiento_id" class="form-control" placeholder="Favorecimiento" asp-for="ODocumentoCliente.FavorecimientoPersona">
+                        </div>
+                        @*CAMPO PARA ESCRITURA*@
+
+                        @*CAMPO PARA PARTIDAS*@
+                        <div class="mb-3 form-group partidas_fields" style="display: none;">
+                            <label class="form-label">Serie Documental</label>
+                            <input type="text" class="form-control" placeholder="Serie Documental" asp-for="ODocumentoCliente.SerieDoc">
+                        </div>
+                        @*CAMPO PARA PARTIDAS*@
+                    </div>
+                    @*<input asp-for="SelectedServiceIds" id="SelectedServiceIdsHidden" />
+                    <input asp-for="SelectedServiceIds" />*@
+                    <input hidden id="SelectedServiceIdsHidden" readonly asp-for="Seleccionados"/>
+                    <input hidden  asp-for="ORecibo.IdRecibo"/>
+                    <input hidden asp-for="ORecibo.FechaEmision" type="date" />
+                    <input hidden asp-for="ORecibo.Total" id="totalServices2" />
+                    <input hidden id="campoCantidades" asp-for="Cantidad" />
+                    <input hidden id="campoSubtotales" asp-for="SubtotalString" />
+
+                    @*<input type="hidden" name="TramiteViewModel" value="@JsonConvert.SerializeObject(tramiteViewModel)">*@
+                    <div class="col-12 text-center">
+                        <div id="vistaParcialContainer">
+                            @*<partial name="~/Views/Tramite/_ActualizadorContenedor.cshtml" />*@
+                        </div>
+                    </div>
+                    <div class="mb-2 col">
+                        @if (Model.OTramite.IdTramite == 0)
+                        {
+                            <button class="btn btn-primary  btn-sm w-25" type="submit">Crear</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-success btn-sm w-25" type="submit">Actualizar</button>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("_ModalService.cshtml",Model.OServicio)
+@*@await Html.PartialAsync("_ActualizadorContenedor.cshtml")*@
+
+
+@section Scripts{
+    <script src="~/js/tramitejquery/controladorcheckbox.js"></script>
+    <script src="~/js/tramitejquery/filtradoselector.js"></script>
+    <script src="~/js/tramitejquery/buscarclienttramite.js"></script>
+    <script src="~/js/tramitejquery/agregarservices.js"></script>
+    <script src="~/js/tramitejquery/filtrotramiteinvestigadores.js"></script>
+}
+
